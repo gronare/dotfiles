@@ -6,4 +6,4 @@
   pair-status = "!git config --get user.pair"
 
 [include]
-  path = .config/gitconfig
+  path = .config/git/gitconfig
