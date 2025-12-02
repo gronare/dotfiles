@@ -1,9 +1,13 @@
 # This is Git's per-user configuration file.
 [core]
   editor = nvim
+  hooksPath = /devbox/support/default_githooks
 
 [alias]
   pair-status = "!git config --get user.pair"
 
 [include]
   path = .config/git/gitconfig
+
+[url "git@github.com:"]
+     insteadOf = https://github.com/
