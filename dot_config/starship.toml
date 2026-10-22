@@ -1,0 +1,27 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = "$directory$git_state$cmd_duration$character"
+add_newline = false
+
+[directory]
+style = "blue"
+format = "[$path]($style)[$read_only]($read_only_style) "
+truncation_length = 3
+truncate_to_repo = true
+truncation_symbol = ""
+repo_root_style = "blue"
+repo_root_format = "([$path]($style)[$read_only]($read_only_style) )"
+read_only = " ro"
+
+[git_state]
+style = "yellow"
+format = "[$state( $progress_current/$progress_total)]($style) "
+
+[cmd_duration]
+min_time = 3000
+style = "bright-black"
+format = "[$duration]($style) "
+
+[character]
+success_symbol = "[❯](magenta)"
+error_symbol = "[❯](red)"

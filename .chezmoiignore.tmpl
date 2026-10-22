@@ -1,0 +1,9 @@
+{{ if ne .chezmoi.os "darwin" }}
+.config/ghostty
+{{ end }}
+{{ if eq .chezmoi.os "darwin" }}
+.zshenv
+{{ end }}
+{{ if ne .zsh "ohmyzsh" }}
+.config/starship.toml
+{{ end }}

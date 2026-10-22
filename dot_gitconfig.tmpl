@@ -1,0 +1,23 @@
+[core]
+  editor = nvim
+{{- if eq .machine "work" }}
+  hooksPath = /devbox/support/default_githooks
+{{- end }}
+
+[alias]
+  pair-status = "!git config --get user.pair"
+
+[include]
+  path = .config/git/gitconfig
+
+[url "git@github.com:"]
+  insteadOf = https://github.com/
+{{- with lookPath "gh" }}
+
+[credential "https://github.com"]
+  helper =
+  helper = !{{ . }} auth git-credential
+[credential "https://gist.github.com"]
+  helper =
+  helper = !{{ . }} auth git-credential
+{{- end }}

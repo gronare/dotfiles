@@ -6,6 +6,7 @@ vim.opt.shiftwidth = 2
 vim.g.mapleader = " "
 
 vim.opt.swapfile = false
+vim.opt.updatetime = 500
 
 vim.keymap.set('n', '<leader>h', ':nohlsearch<CR>')
 vim.wo.number = true

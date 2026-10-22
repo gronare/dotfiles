@@ -1,0 +1,11 @@
+{{- $machine := promptStringOnce . "machine" "Machine type (work/personal)" -}}
+{{- $zsh := promptChoiceOnce . "zsh" "zsh setup" (list "plain" "ohmyzsh") (ternary "ohmyzsh" "plain" (eq .chezmoi.os "darwin")) -}}
+{{- $gitName := promptStringOnce . "git_name" "Git name" -}}
+{{- $gitEmail := promptStringOnce . "git_email" "Git email" -}}
+sourceDir = {{ .chezmoi.sourceDir | quote }}
+
+[data]
+  machine = {{ $machine | quote }}
+  zsh = {{ $zsh | quote }}
+  git_name = {{ $gitName | quote }}
+  git_email = {{ $gitEmail | quote }}

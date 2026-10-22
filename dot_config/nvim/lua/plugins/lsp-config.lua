@@ -53,6 +53,19 @@ return {
       vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {})
       vim.keymap.set("n", "<leader>gf", vim.lsp.buf.format, {})
       vim.keymap.set("n", "<space>rn", vim.lsp.buf.rename, {})
+
+      -- Auto-show diagnostics on CursorHold; <leader>ld toggles
+      local diag_float_enabled = true
+      vim.api.nvim_create_autocmd("CursorHold", {
+        callback = function()
+          if diag_float_enabled then
+            vim.diagnostic.open_float(nil, { focus = false })
+          end
+        end,
+      })
+      vim.keymap.set("n", "<leader>ld", function()
+        diag_float_enabled = not diag_float_enabled
+      end, { desc = "Toggle diagnostic float" })
     end,
   },
 }

@@ -1,0 +1,77 @@
+typeset -U path
+path=($HOME/.local/bin $path)
+
+HISTFILE=~/.history
+HISTSIZE=50000
+SAVEHIST=50000
+setopt inc_append_history share_history hist_ignore_dups hist_ignore_space extended_history
+setopt auto_cd interactive_comments no_beep
+
+export EDITOR=nvim
+export SUDO_EDITOR=$EDITOR
+bindkey -e
+
+autoload -Uz compinit && compinit
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+zstyle ':completion:*' list-colors ''
+
+(( $+commands[fzf] )) && source <(fzf --zsh)
+
+for plugin in zsh-autosuggestions zsh-syntax-highlighting; do
+  for dir in /usr/share/$plugin /opt/homebrew/share/$plugin; do
+    [[ -r $dir/$plugin.zsh ]] && { source $dir/$plugin.zsh; break; }
+  done
+done
+
+zmodload zsh/datetime
+autoload -Uz add-zsh-hook
+
+prompt_git_state() {
+  local git_dir=$1 state= step= total=
+  if [[ -d $git_dir/rebase-merge ]]; then
+    state=REBASING step=$(<$git_dir/rebase-merge/msgnum) total=$(<$git_dir/rebase-merge/end)
+  elif [[ -d $git_dir/rebase-apply ]]; then
+    state=REBASING step=$(<$git_dir/rebase-apply/next) total=$(<$git_dir/rebase-apply/last)
+  elif [[ -f $git_dir/MERGE_HEAD ]]; then state=MERGING
+  elif [[ -f $git_dir/CHERRY_PICK_HEAD ]]; then state=CHERRY-PICKING
+  elif [[ -f $git_dir/REVERT_HEAD ]]; then state=REVERTING
+  elif [[ -f $git_dir/BISECT_LOG ]]; then state=BISECTING
+  fi
+  [[ -n $state ]] && print -rn -- "%F{yellow}$state${total:+ $step/$total}%f "
+}
+
+prompt_duration() {
+  local -i ms=$1
+  (( ms < 3000 )) && return
+  local -i s=$(( ms / 1000 ))
+  local -i h=$(( s / 3600 )) m=$(( s % 3600 / 60 ))
+  local text=
+  (( h )) && text+="${h}h"
+  (( h || m )) && text+="${m}m"
+  text+="$(( s % 60 ))s"
+  print -rn -- "%F{8}$text%f "
+}
+
+prompt_preexec() { prompt_started=$EPOCHREALTIME }
+
+prompt_precmd() {
+  local -a git_info=("${(@f)$(git rev-parse --show-toplevel --absolute-git-dir 2>/dev/null)}")
+  local dir
+  if [[ -n $git_info[1] ]]; then
+    dir=${git_info[1]:t}${PWD#$git_info[1]}
+    dir=${dir//\%/%%}
+  else
+    dir='%3~'
+  fi
+  local -i ms=0
+  [[ -n $prompt_started ]] && ms=$(( (EPOCHREALTIME - prompt_started) * 1000 ))
+  unset prompt_started
+  PROMPT="%F{blue}$dir%f $( [[ -n $git_info[2] ]] && prompt_git_state $git_info[2] )$(prompt_duration $ms)%(?.%F{magenta}.%F{red})❯%f "
+}
+
+add-zsh-hook preexec prompt_preexec
+add-zsh-hook precmd prompt_precmd
+
+{{ template "zshrc-aliases" . }}
+if [[ -r ~/.zshrc.local ]]; then source ~/.zshrc.local; fi
