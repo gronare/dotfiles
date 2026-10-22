@@ -1,5 +1,8 @@
 onboarding = false
 
+[terminal]
+default_shell = "zsh"
+
 [theme]
 name = "catppuccin"
 auto_switch = false
