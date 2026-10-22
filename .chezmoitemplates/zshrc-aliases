@@ -1,3 +1,3 @@
-source ~/.config/aliases/{{ if eq .chezmoi.os "darwin" }}mac{{ else }}linux{{ end }}.zsh
-source ~/.config/aliases/common.zsh
-source ~/.config/aliases/{{ if eq .machine "work" }}work{{ else }}personal{{ end }}.zsh
+for alias_file in {{ if eq .chezmoi.os "darwin" }}mac{{ else }}linux{{ end }} common {{ if eq .machine "work" }}work{{ else }}personal{{ end }}; do
+  if [[ -r ~/.config/aliases/$alias_file.zsh ]]; then source ~/.config/aliases/$alias_file.zsh; fi
+done
